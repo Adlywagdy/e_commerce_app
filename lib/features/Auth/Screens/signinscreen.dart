@@ -5,8 +5,10 @@ and use validator on each textfield , also use all border styles for textformfie
 
 import 'package:e_commerce_app/core/extensions/stringextension.dart';
 import 'package:e_commerce_app/core/widgets/customtextfield.dart';
-
+import 'package:e_commerce_app/features/Auth/cubits/authcubit.dart';
+import 'package:e_commerce_app/features/Auth/cubits/authstates.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -151,27 +153,52 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
 
                               onPressed: () {
-                                print("confirmPassword is $theconfirmpassword");
-                                print("Password is $thepassword");
-                                if (formkey.currentState!.validate() &&
-                                    thepassword == theconfirmpassword) {
-                                  print("true");
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("confirmed")),
+                                if (formkey.currentState!.validate()) {
+                                  formkey.currentState!.save();
+                                  BlocProvider.of<Authcubit>(context).signin(
+                                    context: context,
+                                    theconfirmpassword: theconfirmpassword,
+                                    thepassword: thepassword,
                                   );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("not confirmed"),
-                                    ),
-                                  );
-                                  print("false");
                                 }
+                                // print("confirmPassword is $theconfirmpassword");
+                                // print("Password is $thepassword");
+                                // if (formkey.currentState!.validate() &&
+                                //     thepassword == theconfirmpassword) {
+                                //   print("true");
+
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(content: Text("confirmed")),
+                                //   );
+                                // } else {
+                                //   ScaffoldMessenger.of(context).showSnackBar(
+                                //     const SnackBar(
+                                //       content: Text("not confirmed"),
+                                //     ),
+                                //   );
+                                //   print("false");
+                                // }
                               },
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
+                              icon: BlocBuilder<Authcubit, AuthcubitState>(
+                                builder: (context, state) {
+                                  if (state is AuthcubitLoading) {
+                                    print("loading");
+                                    return CircularProgressIndicator();
+                                  } else if (state is AuthcubitSuccess) {
+                                    print("success");
+                                    return Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    );
+                                  } else if (state is AuthcubitFailure) {
+                                    print("failure");
+                                    return Icon(Icons.close, color: Colors.red);
+                                  }
+                                  return Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                  );
+                                },
                               ),
                             ),
                           ],
