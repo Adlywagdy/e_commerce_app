@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 enum Isrequired { required, optional }
@@ -20,7 +21,6 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.isrequired = Isrequired.optional,
   });
-
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
